@@ -133,8 +133,8 @@ Two bugs worth remembering, both fixed in `src/match.js`:
 
 ## career-ops — the second opinion
 
-[career-ops](https://github.com/career-ops-hq/career-ops) lives in `career-ops/`
-(its own git clone, not part of this project). The scorer here is fast and
+[career-ops](https://github.com/career-ops-hq/career-ops) (MIT) lives in
+`career-ops/`, vendored into this private repo as a git subtree. The scorer here is fast and
 explainable but only knows keywords; career-ops has Claude read the whole
 posting against your CV, score it 1-5, and write a tailored CV PDF and cover
 letter for the ones worth applying to.
@@ -161,8 +161,21 @@ are deliberately blank — fill them in `config/profile.yml` when decided.
 project's score, not career-ops'), `maxPerRun` (each one costs an evaluation),
 and `dir`. Jobs you marked applied or dismissed are never sent, and nothing is
 sent twice — dedup uses career-ops' own rules, so a job it already evaluated
-stays out. Update it with `npm run update` inside that folder; that never
-touches your CV, reports or tracker.
+stays out.
+
+**Updating career-ops.** It is no longer its own git clone, so do NOT run
+`npm run update` inside it — that script drives git and would act on this
+repo instead. Pull upstream with git subtree from the job-agent root:
+
+```
+git subtree pull --prefix=career-ops https://github.com/career-ops-hq/career-ops.git main --squash
+```
+
+Your setup files there (`cv.md`, `config/profile.yml`, `modes/_profile.md`,
+`_brief.md`, `_custom.md`, `portals.yml`, `voice-dna.md`, `.mcp.json`) are
+committed here even though career-ops' own `.gitignore` lists them — upstream
+never ships those files, so a pull cannot overwrite them. Its runtime output
+(`data/`, `jds/`, `reports/`, `output/`) stays untracked.
 
 ## Files
 
