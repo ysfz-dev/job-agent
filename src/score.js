@@ -44,6 +44,10 @@ const COMPETING = ['react', 'vue', 'svelte', 'python', 'java', 'php', 'ruby',
 
 const OURS = ['angular', '.net', 'asp.net', 'c#', 'dotnet', 'blazor'];
 
+// His secondary stack: not what he is hired for today, but what he has built
+// and shipped on (his own platform).
+const NEAR = ['typescript', 'nestjs', 'node.js', 'postgresql'];
+
 // "Saudi National Bank" is an employer, not a quota.
 const OTHER_NATIONALS = /\b(saudi|emirati|uae|qatari|kuwaiti|omani)\s+nationals?\b(?!\s+bank)|\b(saudis|emiratis|qataris|kuwaitis|omanis)\s+only\b|\bsaudi\s+only\b/;
 const BAHRAINI_ONLY = /\bbahraini\s+(nationals?|only|candidates)\b|\bbahrainis\s+only\b/;
@@ -55,7 +59,9 @@ const REMOTE_WORDS = /\b(remote|job|jobs|anywhere|worldwide|global|home based|wo
 const REMOTE_IN_TITLE = /\bremote\b\W*(?:from|in|within|only)?\s*(?:the\s+)?(eu|europe|us|usa|u\.s\.|uk|latam|emea|americas|apac|germany|spain|portugal|poland|india|brazil|canada|mexico)\b/;
 
 export function score(job) {
-  const title = (job.title || '').toLowerCase();
+  // NFKC folds the "𝗦𝗲𝗻𝗶𝗼𝗿 𝗘𝗥𝗣𝗡𝗲𝘅𝘁 𝗗𝗲𝘃𝗲𝗹𝗼𝗽𝗲𝗿" style of LinkedIn title (Unicode
+  // bold letters) back to plain text, which no word match could read.
+  const title = (job.title || '').normalize('NFKC').toLowerCase();
   const loc = (job.location || '').toLowerCase();
   const desc = (job.description || '').toLowerCase();
   const tags = (job.tags || []).join(' ').toLowerCase();
@@ -134,8 +140,13 @@ export function score(job) {
     // "Full-stack Engineer" in Manama was being thrown away for saying React.
     // Ranked well below his own stack, but kept. Elsewhere it stays a reject —
     // abroad there are enough Angular/.NET roles that a React one is noise.
+    //
+    // TypeScript, NestJS and PostgreSQL are his own stack too — Tajer Al
+    // Fareej runs on them — so a Riyadh "Backend Engineer (Node.js /
+    // TypeScript, NestJS)" is a near miss, not a different profession.
+    const near = NEAR.some((s) => contains(blob, s));
     if (rivals.length && local && engineeringTitle) {
-      pts -= 25;
+      pts -= near ? 10 : 25;
       reasons.push(`built on ${rivals.slice(0, 3).join(', ')} — not your stack, but a Gulf role`);
     } else if (rivals.length) {
       return reject(`built on ${rivals.slice(0, 3).join(', ')} — no Angular or .NET anywhere in the posting`);
@@ -163,7 +174,10 @@ export function score(job) {
       flags.push('unknown-stack');
       reasons.push('no description published — stack unknown, worth opening');
     } else {
-      pts -= 30;
+      // Abroad, a role that never names his stack is noise. In the Gulf it is
+      // most of the market — ServiceNow, Power Platform, Odoo, NestJS — and -30
+      // was pushing every one of them under the threshold.
+      pts -= local ? 10 : 30;
       reasons.push('no Angular or .NET mentioned anywhere');
     }
   }

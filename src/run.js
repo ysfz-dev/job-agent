@@ -49,8 +49,11 @@ async function main() {
     return !firstMatch(t, profile.badTitles) && profile.goodTitles.some((g) => contains(t, g));
   };
 
-  console.log(`\n[${startedAt.toISOString()}] fetching sources...`);
-  const apiJobs = await fetchAll({
+  // --rescore skips every source and re-ranks what is already stored: a scorer
+  // change shows up in seconds instead of after a 15-minute LinkedIn pass.
+  const rescore = process.argv.includes('--rescore');
+  if (!rescore) console.log(`\n[${startedAt.toISOString()}] fetching sources...`);
+  const apiJobs = rescore ? [] : await fetchAll({
     linkedinOpts: { known, want: worthReading },
     ghSlugs: config.greenhouseSlugs || [],
     leverSlugs: config.leverSlugs || [],
@@ -64,7 +67,7 @@ async function main() {
   // Job-alert emails are read separately (src/mail.js) and merged here. They are
   // the only source with real Bahrain / Saudi coverage (Indeed, Bayt, GulfTalent),
   // so a run that cannot reach the mailbox still uses the last successful read.
-  const liJobs = await readJson(path.join(DATA, 'email-jobs.json'), []);
+  const liJobs = rescore ? [] : await readJson(path.join(DATA, 'email-jobs.json'), []);
   console.log(`  email-alerts ${String(liJobs.length).padStart(4)} jobs`);
 
   // These feeds serve a rolling window, not an archive — a strong match can
@@ -83,10 +86,12 @@ async function main() {
     store[key] = { ...(store[key] || {}), ...j, description,
                    firstSeen: store[key]?.firstSeen || now, lastSeen: now };
   }
-  for (const [key, j] of Object.entries(store)) {
-    if (now - (j.lastSeen || 0) > KEEP_MS) delete store[key];
+  if (!rescore) {
+    for (const [key, j] of Object.entries(store)) {
+      if (now - (j.lastSeen || 0) > KEEP_MS) delete store[key];
+    }
+    await writeFile(path.join(DATA, 'seen-jobs.json'), JSON.stringify(store));
   }
-  await writeFile(path.join(DATA, 'seen-jobs.json'), JSON.stringify(store));
 
   const jobs = Object.values(store);
   const fresh = [...liJobs, ...apiJobs].length;
@@ -96,12 +101,23 @@ async function main() {
     .filter((j) => j.score.total >= (config.minScore ?? 25))
     .filter((j) => !applied[j.id] && !dismissed[j.id]);
 
+  // Bahrain is first priority, but its postings mostly arrive from alert
+  // emails with no description, so they can never out-score a fully described
+  // Riyadh role and the daily picks were showing "Bahrain 0". The best two
+  // Bahrain jobs always get a slot; the rest go by score.
+  const nPicks = config.dailyPicks ?? 5;
+  const home = ranked.filter((j) => j.score.region === 'Bahrain').slice(0, 2);
+  const picks = [...home, ...ranked.filter((j) => !home.includes(j)).slice(0, nPicks - home.length)]
+    .sort((a, b) => b.score.total - a.score.total);
+
   const state = {
     generatedAt: startedAt.toISOString(),
     totalFetched: jobs.length,
     totalRanked: ranked.length,
-    picks: ranked.slice(0, config.dailyPicks ?? 5),
-    queue: ranked.slice(0, 60),
+    picks,
+    // Everything that matched. This was capped at 60, so the dashboard said
+    // "155 matched you" and showed 60 of them.
+    queue: ranked,
     appliedCount: Object.keys(applied).length,
   };
 

@@ -111,6 +111,12 @@ export const profile = {
     'solutions consultant', 'solution consultant', 'technical consultant',
     'implementation consultant', 'erp consultant', 'pre-sales', 'presales',
     'business analyst',
+    // Gulf IT roles that are his work under another name. Microsoft-stack
+    // functional/technical consulting is common in Saudi and the UAE.
+    'system analyst', 'systems analyst', 'application support', 'application specialist',
+    'techno-functional', 'functional consultant', 'dynamics 365', 'd365',
+    'power platform', 'sharepoint', 'software engineering',
+    'developement',   // sic — a real posting's spelling
   ],
 
   // Roles that are not his job, whatever the keyword overlap.

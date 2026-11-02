@@ -177,6 +177,22 @@ const CASES = [
     want: 'reject',
   },
   {
+    name: 'NestJS backend in Riyadh is a near miss',
+    j: { title: 'Senior Backend Software Engineer (Node.js / TypeScript)', location: 'Riyadh, Saudi Arabia', description: 'Build services in Node.js, TypeScript and NestJS on PostgreSQL. Our web app is React and Vue. You have 4 years of experience shipping production APIs in a fast-growing fintech team.' },
+    want: 'accept',
+    min: 25,
+  },
+  {
+    name: 'Unicode-bold LinkedIn title read',
+    j: { title: '𝗦𝗲𝗻𝗶𝗼𝗿 𝗘𝗥𝗣𝗡𝗲𝘅𝘁 𝗗𝗲𝘃𝗲𝗹𝗼𝗽𝗲𝗿', location: 'Riyadh, Saudi Arabia', description: '' },
+    want: 'accept',
+  },
+  {
+    name: 'Dynamics 365 consultant in Dubai accepted',
+    j: { title: 'Microsoft Dynamics 365 Functional Consultant', location: 'Dubai, UAE', description: '' },
+    want: 'accept',
+  },
+  {
     name: 'solutions consultant in Riyadh accepted',
     j: { title: 'Customer Solutions Consultant', location: 'Riyadh, Saudi Arabia', description: 'Pre-sales consultant for our CPaaS platform: run client meetings, map requirements and propose solutions to enterprise customers across the Kingdom. ERP and SaaS integration experience valued. 3 years.' },
     want: 'accept',
@@ -189,7 +205,8 @@ let fail = 0;
 for (const c of CASES) {
   const s = score(job(c.j));
   const got = s.total > 0 ? 'accept' : 'reject';
-  if (got === c.want && (!c.flag || s.flags.includes(c.flag))) {
+  // `min` checks the job also clears the dashboard's threshold, not just zero.
+  if (got === c.want && (!c.flag || s.flags.includes(c.flag)) && (!c.min || s.total >= c.min)) {
     console.log(`  ok    ${c.name.padEnd(42)} ${String(s.total).padStart(5)}`);
     pass++;
   } else {
