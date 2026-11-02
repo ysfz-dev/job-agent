@@ -1,0 +1,28 @@
+{
+  "name": "job-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Semi-automated job search and application agent (LinkedIn + free job boards)",
+  "scripts": {
+    "daily": "node src/daily.js",
+    "serve": "node src/serve.js",
+    "mail": "node src/mail.js",
+    "search": "node src/run.js",
+    "letters": "node src/letters.js",
+    "career-ops": "node src/career-ops.js",
+    "test": "node src/mail.test.js && node src/score.test.js",
+    "send": "node src/send.js",
+    "market": "node src/market.js",
+    "inbox": "node src/inbox.js",
+    "build:autofill": "node src/build-autofill.js",
+    "discover": "node src/discover.js",
+    "cv": "node src/cv.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "imapflow": "^1.0.171",
+    "mailparser": "^3.7.1",
+    "nodemailer": "^10.0.9"
+  }
+}

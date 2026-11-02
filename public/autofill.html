@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autofill — Job Agent</title>
+<style>
+  :root { color-scheme: light dark; --bg:#f6f7f9; --surface:#fff; --ink:#16191d;
+          --muted:#5d6570; --line:#e2e6ea; --accent:#0f6b72; --warn:#8a5a08; --warn-bg:#fdf3e2; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#14171a; --surface:#1c2126; --ink:#e8eaed; --muted:#9aa4b0;
+            --line:#2a3038; --accent:#4bb9c2; --warn:#e8be6a; --warn-bg:#332711; }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:15px/1.6 -apple-system,"Segoe UI",Roboto,sans-serif }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 80px }
+  h1 { font-size:21px; margin:0 0 6px }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.07em;
+       color:var(--muted); margin:30px 0 10px }
+  .sub { color:var(--muted); margin:0 0 26px }
+  .drag { display:inline-block; background:var(--accent); color:#fff; font-weight:600;
+          padding:12px 22px; border-radius:9px; text-decoration:none; font-size:16px }
+  .card { background:var(--surface); border:1px solid var(--line);
+          border-radius:12px; padding:18px 20px; margin:14px 0 }
+  ol { margin:0; padding-left:20px } li { margin:7px 0 }
+  code { background:var(--bg); border:1px solid var(--line); border-radius:4px;
+         padding:1px 5px; font:13px ui-monospace,Consolas,monospace }
+  table { border-collapse:collapse; width:100%; font-size:14px }
+  td { padding:5px 10px 5px 0; border-bottom:1px solid var(--line); vertical-align:top }
+  td:first-child { color:var(--muted); white-space:nowrap; width:40% }
+  .warn { background:var(--warn-bg); color:var(--warn); border-radius:9px; padding:14px 18px }
+</style></head><body><div class="wrap">
+
+<h1>Autofill</h1>
+<p class="sub">Drag the button to your bookmarks bar. On any job application page,
+click it — it fills what it recognises, outlines each field, and leaves the rest to you.</p>
+
+<p><a class="drag" href="javascript:(function%20()%20%7B%0A%20%20const%20P%20%3D%20__PROFILE__%3B%0A%20%20function%20setValue(el%2C%20value)%20%7B%0A%20%20%20%20const%20proto%20%3D%20el%20instanceof%20HTMLTextAreaElement%0A%20%20%20%20%20%20%3F%20HTMLTextAreaElement.prototype%0A%20%20%20%20%20%20%3A%20HTMLInputElement.prototype%3B%0A%20%20%20%20const%20setter%20%3D%20Object.getOwnPropertyDescriptor(proto%2C%20'value').set%3B%0A%20%20%20%20setter.call(el%2C%20value)%3B%0A%20%20%20%20el.dispatchEvent(new%20Event('input'%2C%20%7B%20bubbles%3A%20true%20%7D))%3B%0A%20%20%20%20el.dispatchEvent(new%20Event('change'%2C%20%7B%20bubbles%3A%20true%20%7D))%3B%0A%20%20%7D%0A%20%20function%20contextOf(el)%20%7B%0A%20%20%20%20const%20bits%20%3D%20%5Bel.name%2C%20el.id%2C%20el.placeholder%2C%20el.getAttribute('aria-label')%2C%0A%20%20%20%20%20%20el.getAttribute('data-qa')%2C%20el.getAttribute('autocomplete')%5D%3B%0A%20%20%20%20if%20(el.id)%20%7B%0A%20%20%20%20%20%20const%20lab%20%3D%20document.querySelector('label%5Bfor%3D%22'%20%2B%20CSS.escape(el.id)%20%2B%20'%22%5D')%3B%0A%20%20%20%20%20%20if%20(lab)%20bits.push(lab.innerText)%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20wrap%20%3D%20el.closest('label%2C%20.field%2C%20.form-group%2C%20%5Bclass*%3D%22field%22%5D%2C%20%5Bclass*%3D%22question%22%5D')%3B%0A%20%20%20%20if%20(wrap)%20bits.push(wrap.innerText.slice(0%2C%20160))%3B%0A%20%20%20%20return%20bits.filter(Boolean).join('%20').toLowerCase()%3B%0A%20%20%7D%0A%20%20const%20RULES%20%3D%20%5B%0A%20%20%20%20%5B%2Ffirst%5Cs*name%7Cgiven%5Cs*name%7Cforename%2F%2C%20P.firstName%5D%2C%0A%20%20%20%20%5B%2Flast%5Cs*name%7Csurname%7Cfamily%5Cs*name%2F%2C%20P.lastName%5D%2C%0A%20%20%20%20%5B%2Ffull%5Cs*name%7C%5Ename%24%7Cyour%5Cs*name%7Capplicant%5Cs*name%7Ccandidate%5Cs*name%2F%2C%20P.fullName%5D%2C%0A%20%20%20%20%5B%2Fe-%3Fmail%2F%2C%20P.email%5D%2C%0A%20%20%20%20%5B%2Fphone%7Cmobile%7Ctelephone%7Ccontact%5Cs*number%2F%2C%20P.phone%5D%2C%0A%20%20%20%20%5B%2Flinked%5Cs*in%2F%2C%20P.linkedin%5D%2C%0A%20%20%20%20%5B%2Fgit%5Cs*hub%2F%2C%20P.github%5D%2C%0A%20%20%20%20%5B%2Fportfolio%7Cpersonal%5Cs*(web)%3Fsite%7Cwebsite%7Cblog%2F%2C%20P.website%5D%2C%0A%20%20%20%20%5B%2Fcurrent%5Cs*(employer%7Ccompany)%7Cpresent%5Cs*company%7Ccompany%5Cs*name%2F%2C%20P.currentCompany%5D%2C%0A%20%20%20%20%5B%2Fcurrent%5Cs*(job%5Cs*)%3Ftitle%7Ccurrent%5Cs*role%7Cjob%5Cs*title%7Cposition%5Cs*title%2F%2C%20P.currentTitle%5D%2C%0A%20%20%20%20%5B%2Fyears%3F%5Cs*(of%5Cs*)%3F(relevant%5Cs*)%3Fexperience%7Cexperience%5Cs*%5C(years%5C)%7Cyoe%2F%2C%20P.yearsExperience%5D%2C%0A%20%20%20%20%5B%2Fcity%7Ctown%2F%2C%20P.addressCity%5D%2C%0A%20%20%20%20%5B%2Fnationality%7Ccitizenship%2F%2C%20P.nationality%5D%2C%0A%20%20%20%20%5B%2Fcountry%7Clocation%2F%2C%20P.addressCountry%5D%2C%0A%20%20%20%20%5B%2Funiversity%7Ccollege%7Cschool%7Cinstitution%2F%2C%20P.university%5D%2C%0A%20%20%20%20%5B%2Fdegree%7Cqualification%7Cmajor%7Cfield%5Cs*of%5Cs*study%2F%2C%20P.degree%5D%2C%0A%20%20%20%20%5B%2Fgraduat%5Cw*%5Cs*(year%7Cdate)%7Cyear%5Cs*of%5Cs*graduation%2F%2C%20P.graduationYear%5D%2C%0A%20%20%20%20%5B%2Fnotice%5Cs*period%7Cavailability%7Cavailable%5Cs*from%7Cstart%5Cs*date%2F%2C%20P.noticePeriod%5D%2C%0A%20%20%20%20%5B%2Fsalary%7Ccompensation%7Cexpected%5Cs*pay%7Cremuneration%2F%2C%20P.salaryExpectation%5D%2C%0A%20%20%5D%3B%0A%20%20const%20YESNO%20%3D%20%5B%0A%20%20%20%20%5B%2Fsponsor%7Cvisa%5Cs*(support%7Csponsorship)%7Crequire%5Cs*sponsorship%2F%2C%20P.requiresSponsorship%5D%2C%0A%20%20%20%20%5B%2Flegally%5Cs*authorh%3Fi%5Bsz%5Ded%7Cright%5Cs*to%5Cs*work%7Cwork%5Cs*authorh%3Fi%5Bsz%5Dation%7Celigible%5Cs*to%5Cs*work%2F%2C%20P.authorizedInCountry%5D%2C%0A%20%20%20%20%5B%2Frelocat%2F%2C%20P.willingToRelocate%5D%2C%0A%20%20%20%20%5B%2Ftravel%2F%2C%20P.willingToTravel%5D%2C%0A%20%20%5D%3B%0A%20%20let%20filled%20%3D%200%3B%0A%20%20const%20skipped%20%3D%20%5B%5D%3B%0A%20%20function%20mark(el%2C%20ok)%20%7B%0A%20%20%20%20el.style.outline%20%3D%20ok%20%3F%20'2px%20solid%20%2316a34a'%20%3A%20'2px%20solid%20%23f59e0b'%3B%0A%20%20%20%20el.style.outlineOffset%20%3D%20'1px'%3B%0A%20%20%7D%0A%20%20document.querySelectorAll('input%2C%20textarea%2C%20select').forEach((el)%20%3D%3E%20%7B%0A%20%20%20%20if%20(el.disabled%20%7C%7C%20el.readOnly%20%7C%7C%20el.type%20%3D%3D%3D%20'hidden'%20%7C%7C%20el.type%20%3D%3D%3D%20'file')%20return%3B%0A%20%20%20%20if%20(el.type%20%3D%3D%3D%20'password'%20%7C%7C%20el.type%20%3D%3D%3D%20'search')%20return%3B%0A%20%20%20%20const%20ctx%20%3D%20contextOf(el)%3B%0A%20%20%20%20if%20(!ctx)%20return%3B%0A%20%20%20%20if%20(el.type%20%3D%3D%3D%20'checkbox'%20%7C%7C%20el.type%20%3D%3D%3D%20'radio')%20%7B%0A%20%20%20%20%20%20for%20(const%20%5Bre%2C%20answer%5D%20of%20YESNO)%20%7B%0A%20%20%20%20%20%20%20%20if%20(!re.test(ctx)%20%7C%7C%20answer%20%3D%3D%3D%20null)%20continue%3B%0A%20%20%20%20%20%20%20%20const%20wants%20%3D%20%2F%5E(yes%7Ctrue)%24%2Fi.test(String(answer))%3B%0A%20%20%20%20%20%20%20%20const%20isYes%20%3D%20%2Fyes%7Ctrue%2Fi.test(el.value%20%2B%20'%20'%20%2B%20ctx.slice(0%2C%2040))%3B%0A%20%20%20%20%20%20%20%20if%20(el.type%20%3D%3D%3D%20'radio'%20%26%26%20isYes%20%3D%3D%3D%20wants%20%26%26%20!el.checked)%20%7B%20el.click()%3B%20filled%2B%2B%3B%20mark(el%2C%20true)%3B%20%7D%0A%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20if%20(el.tagName%20%3D%3D%3D%20'SELECT')%20%7B%0A%20%20%20%20%20%20for%20(const%20%5Bre%2C%20answer%5D%20of%20YESNO)%20%7B%0A%20%20%20%20%20%20%20%20if%20(!re.test(ctx)%20%7C%7C%20answer%20%3D%3D%3D%20null)%20continue%3B%0A%20%20%20%20%20%20%20%20const%20want%20%3D%20String(answer).toLowerCase()%3B%0A%20%20%20%20%20%20%20%20const%20opt%20%3D%20%5B...el.options%5D.find((o)%20%3D%3E%20o.text.trim().toLowerCase().startsWith(want))%3B%0A%20%20%20%20%20%20%20%20if%20(opt)%20%7B%20el.value%20%3D%20opt.value%3B%20el.dispatchEvent(new%20Event('change'%2C%20%7B%20bubbles%3A%20true%20%7D))%3B%20filled%2B%2B%3B%20mark(el%2C%20true)%3B%20%7D%0A%20%20%20%20%20%20%20%20break%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20if%20(el.value%20%26%26%20el.value.trim())%20return%3B%20%20%20%2F%2F%20never%20overwrite%20what%20is%20there%0A%20%20%20%20for%20(const%20%5Bre%2C%20value%5D%20of%20RULES)%20%7B%0A%20%20%20%20%20%20if%20(!re.test(ctx))%20continue%3B%0A%20%20%20%20%20%20if%20(!value)%20%7B%20skipped.push(ctx.slice(0%2C%2048).replace(%2F%5Cs%2B%2Fg%2C%20'%20'))%3B%20mark(el%2C%20false)%3B%20break%3B%20%7D%0A%20%20%20%20%20%20setValue(el%2C%20value)%3B%0A%20%20%20%20%20%20filled%2B%2B%3B%0A%20%20%20%20%20%20mark(el%2C%20true)%3B%0A%20%20%20%20%20%20break%3B%0A%20%20%20%20%7D%0A%20%20%7D)%3B%0A%20%20const%20note%20%3D%20document.createElement('div')%3B%0A%20%20note.style.cssText%20%3D%20'position%3Afixed%3Bz-index%3A2147483647%3Bright%3A16px%3Bbottom%3A16px%3Bmax-width%3A340px%3B'%0A%20%20%20%20%2B%20'background%3A%23111827%3Bcolor%3A%23f9fafb%3Bfont%3A13px%2F1.5%20system-ui%2Csans-serif%3Bpadding%3A14px%2016px%3B'%0A%20%20%20%20%2B%20'border-radius%3A10px%3Bbox-shadow%3A0%208px%2030px%20rgba(0%2C0%2C0%2C.35)'%3B%0A%20%20note.innerHTML%20%3D%20'%3Cb%3EFilled%20'%20%2B%20filled%20%2B%20'%20field'%20%2B%20(filled%20%3D%3D%3D%201%20%3F%20''%20%3A%20's')%20%2B%20'%3C%2Fb%3E'%0A%20%20%20%20%2B%20'%3Cdiv%20style%3D%22opacity%3A.75%3Bmargin-top%3A6px%22%3EGreen%20outline%20%3D%20filled.%20Amber%20%3D%20matched%20but%20'%0A%20%20%20%20%2B%20'blank%20in%20your%20profile.%3C%2Fdiv%3E'%0A%20%20%20%20%2B%20(skipped.length%0A%20%20%20%20%20%20%3F%20'%3Cdiv%20style%3D%22margin-top%3A8px%3Bcolor%3A%23fbbf24%22%3ELeft%20for%20you%3A%20'%20%2B%20%5B...new%20Set(skipped)%5D.slice(0%2C%204).join('%2C%20')%20%2B%20'%3C%2Fdiv%3E'%0A%20%20%20%20%20%20%3A%20'')%0A%20%20%20%20%2B%20'%3Cdiv%20style%3D%22margin-top%3A10px%3Bopacity%3A.75%22%3ECheck%20every%20field%2C%20then%20submit%20yourself.%3C%2Fdiv%3E'%3B%0A%20%20note.onclick%20%3D%20()%20%3D%3E%20note.remove()%3B%0A%20%20document.body.appendChild(note)%3B%0A%20%20setTimeout(()%20%3D%3E%20note.remove()%2C%2012000)%3B%0A%7D)()%3B">Fill Application</a></p>
+
+<div class="card">
+  <h2 style="margin-top:0">Setting it up</h2>
+  <ol>
+    <li>Press <code>Ctrl+Shift+B</code> to show the bookmarks bar</li>
+    <li>Drag the teal button onto it</li>
+    <li>Open a job application, click the bookmark</li>
+    <li><strong>Read every field</strong>, fix anything wrong, submit yourself</li>
+  </ol>
+</div>
+
+<h2>What it fills</h2>
+<div class="card">
+<table>
+  <tr><td>first name</td><td>Yousaf</td></tr>
+  <tr><td>last name</td><td>Khan</td></tr>
+  <tr><td>full name</td><td>Yousaf Khan</td></tr>
+  <tr><td>email</td><td>yousaf973bh@gmail.com</td></tr>
+  <tr><td>phone</td><td>+973 39260916</td></tr>
+  <tr><td>linkedin</td><td>https://linkedin.com/in/yousafkhan973/</td></tr>
+  <tr><td>address city</td><td>Manama</td></tr>
+  <tr><td>address country</td><td>Bahrain</td></tr>
+  <tr><td>current company</td><td>Amthal Group</td></tr>
+  <tr><td>current title</td><td>Software Engineer</td></tr>
+  <tr><td>nationality</td><td>Bahraini</td></tr>
+  <tr><td>years experience</td><td>3</td></tr>
+  <tr><td>degree</td><td>BSc Software Engineering</td></tr>
+  <tr><td>university</td><td>University of Bahrain</td></tr>
+  <tr><td>graduation year</td><td>2023</td></tr>
+  <tr><td>willing to relocate</td><td>yes</td></tr>
+  <tr><td>willing to travel</td><td>yes</td></tr>
+</table>
+</div>
+
+<h2>Left blank on purpose</h2>
+<div class="warn">
+  <strong>github, website, noticePeriod, salaryExpectation, authorizedInCountry, requiresSponsorship</strong>
+  <p style="margin:8px 0 0">These are the questions that get applications auto-rejected,
+  and the right answer changes per posting — notice period, salary, and whether you need
+  sponsorship in <em>that</em> country. A script guessing them is worse than a blank field,
+  so it flags them amber and stops. Set them in <code>src/profile.js</code> under
+  <code>application</code> once you have decided, then re-run
+  <code>node src/build-autofill.js</code>.</p>
+</div>
+
+<h2>Why this instead of a bot</h2>
+<div class="card">
+  <p style="margin:0">This is ordinary JavaScript running on a page you opened, in your
+  own browser — the same thing a password manager does. There is no automation framework
+  driving the session, so <code>navigator.webdriver</code> stays <code>false</code> and
+  there is nothing for a site's bot detection to find. You stay the one who reads the
+  form and presses submit, which is also the part worth keeping a human on.</p>
+</div>
+
+</div></body></html>

@@ -1,0 +1,9 @@
+node_modules/
+# Everything in data/ is personal: applications, letters, every posting seen.
+data/
+resume/
+career-ops/
+*.log
+
+.env
+.env.local

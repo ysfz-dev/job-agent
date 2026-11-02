@@ -1,0 +1,57 @@
+{
+  "dailyPicks": 5,
+  "minScore": 25,
+  "careerOps": {
+    "dir": "career-ops",
+    "minScore": 60,
+    "maxPerRun": 10
+  },
+  "greenhouseSlugs": [
+    "gitlab",
+    "stripe",
+    "cloudflare",
+    "elastic",
+    "hashicorp",
+    "mongodb",
+    "grafanalabs",
+    "sonarsource",
+    "canonical",
+    "automattic",
+    "zapier",
+    "twilio",
+    "docusign",
+    "ea",
+    "unity",
+    "tamara",
+    "hala",
+    "careem"
+  ],
+  "leverSlugs": [
+    "plaid",
+    "attentive",
+    "netlify",
+    "voodoo",
+    "leverdemo"
+  ],
+  "ashbySlugs": [
+    "ramp",
+    "linear",
+    "vanta",
+    "replit",
+    "deel",
+    "posthog",
+    "supabase",
+    "flatfile",
+    "openai",
+    "cohere",
+    "kraken",
+    "mercury"
+  ],
+  "smartrecruitersSlugs": [
+    "ctm360",
+    "bahrainairportcompany"
+  ],
+  "recruiteeSlugs": [
+    "unifonic"
+  ]
+}
