@@ -2,18 +2,16 @@
 //
 // The same facts, presented the way each market expects them:
 //
-//   Gulf (Bahrain, Saudi, rest of GCC) — photo and nationality, prominently.
-//     He is Bahraini: in Bahrain that is the hire Bahrainisation targets, and
-//     anywhere else in the GCC it means no visa and no sponsorship. Gulf
-//     recruiters screen on it before reading anything else, so it goes in the
-//     header, not the last line.
+//   Gulf (Bahrain, Saudi, rest of GCC) — photo, and "Nationality: Bahraini"
+//     as one quiet line under Contact. Gulf recruiters look for it; it needs
+//     no explanation of visas beside it.
 //   Canada, Australia — no photo, no nationality, no personal details. Both
 //     countries' recruiters are trained to avoid them for anti-discrimination
 //     reasons, and a photo can get a CV set aside unread. Single column,
 //     because the ATSes there (Workday, Taleo, iCIMS) misread sidebars.
 //   Remote — the same ATS-safe layout, with the time zone instead.
 //
-//   npm run cv      writes resume/<region>/Yousaf Khan - Software Engineer.pdf
+//   npm run cv      writes resume/<region>/Yousaf Yousafzai - Software Engineer.pdf
 //
 // PDFs are printed by the Microsoft Edge that ships with Windows, headless,
 // so there is nothing to install.
@@ -27,7 +25,7 @@ import { ROOT, isMain } from './paths.js';
 import cv from './cv-content.js';
 
 const OUT = path.join(ROOT, 'resume');
-const FILE = 'Yousaf Khan - Software Engineer';
+const FILE = 'Yousaf Yousafzai - Software Engineer';
 const PHOTO = path.join(OUT, 'photo.jpg');
 
 export const REGIONS = {
@@ -35,15 +33,11 @@ export const REGIONS = {
     label: 'Bahrain',
     layout: 'gulf',
     paper: 'A4',
-    status: 'Bahraini national · no visa or work permit needed',
-    personal: [['Nationality', 'Bahraini']],
   },
   saudi: {
     label: 'Saudi Arabia',
     layout: 'gulf',
     paper: 'A4',
-    status: 'Bahraini national (GCC) · no work visa or sponsorship needed in KSA',
-    personal: [['Nationality', 'Bahraini (GCC national)'], ['Relocation', 'Open to relocating within Saudi Arabia']],
     // ZATCA e-invoicing is a Saudi regulatory requirement he has already built
     // against the official sandbox — the line a Saudi hiring manager stops on.
     lead: ['zatca'],
@@ -52,8 +46,6 @@ export const REGIONS = {
     label: 'UAE, Qatar, Kuwait, Oman',
     layout: 'gulf',
     paper: 'A4',
-    status: 'Bahraini national (GCC) · no work visa or sponsorship needed',
-    personal: [['Nationality', 'Bahraini (GCC national)'], ['Relocation', 'Open to relocating within the GCC']],
     lead: ['qatar', 'bic'],
   },
   canada: {
@@ -144,7 +136,7 @@ function experience(region, r) {
 }
 
 // The design of the CV he already sends in the Gulf (Documents/CV/cv.html),
-// with the photo and a personal-details block.
+// with the photo and nationality.
 function gulf(region, photo) {
   const r = (s) => rich(s, speller(region));
   const { jobs, projects } = experience(region, r);
@@ -160,7 +152,6 @@ function gulf(region, photo) {
   header h1 { font-size: 27pt; font-weight: 300; letter-spacing: 0.04em; line-height: 1; }
   header h1 b { font-weight: 800; }
   header p { margin-top: 3mm; font-size: 7.8pt; letter-spacing: 0.18em; text-transform: uppercase; color: #b9cbe0; font-weight: 600; }
-  header p.status { margin-top: 2mm; letter-spacing: 0.06em; text-transform: none; font-size: 8.6pt; color: #fff; }
   header img { width: 29mm; height: 29mm; border-radius: 50%; object-fit: cover; object-position: center 28%; border: 1.2mm solid #e8eef5; }
   .cols { display: grid; grid-template-columns: 66mm 1fr; }
   aside { background: #eef2f6; padding: 6mm 6mm 5mm 9mm; }
@@ -188,21 +179,17 @@ function gulf(region, photo) {
   li::marker { color: #2f6fa3; }
   .proj > b { font-size: 9.8pt; }
   .proj + .proj { margin-top: 1.8mm; }
-  .personal div { font-size: 8.3pt; margin-bottom: 0.8mm; }
-  .personal b { color: #173a5e; }
 </style></head>
 <body><div class="page">
 <header>
-  <div><h1>${esc(cv.name[0])} <b>${esc(cv.name[1])}</b></h1><p>${esc(cv.headline)}</p><p class="status">${esc(region.status)}</p></div>
+  <div><h1>${esc(cv.name[0])} <b>${esc(cv.name[1])}</b></h1><p>${esc(cv.headline)}</p></div>
   ${photo ? `<img src="${photo}" alt="">` : ''}
 </header>
 <div class="cols">
 <aside>
   <section class="contact"><h2>Contact</h2>
     <div>✉ ${esc(cv.email)}</div><div>☎ ${esc(cv.phone)}</div><div>● ${esc(cv.city)}</div><div>↗ ${esc(cv.linkedin)}</div>
-  </section>
-  <section class="personal"><h2>Personal details</h2>
-    ${region.personal.map(([k, v]) => `<div><b>${esc(k)}:</b> ${esc(v)}</div>`).join('')}
+    <div>⚑ Nationality: ${esc(cv.nationality)}</div>
   </section>
   <section><h2>Technical skills</h2>
     ${cv.skills.map(([k, v]) => `<h3>${esc(k)}</h3><div class="skill">${esc(v)}</div>`).join('')}

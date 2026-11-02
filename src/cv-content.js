@@ -7,7 +7,8 @@
 // **double asterisks** mark the phrases set in bold.
 
 export const cv = {
-  name: ['YOUSAF', 'KHAN'],
+  name: ['YOUSAF', 'YOUSAFZAI'],
+  nationality: 'Bahraini',   // shown on the Gulf CVs only
   email: 'yousaf973bh@gmail.com',
   phone: '+973 3926 0916',
   city: 'Manama, Bahrain',

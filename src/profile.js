@@ -1,9 +1,9 @@
-// Yousaf Khan — derived from "Yousaf Khan - Software Engineer.pdf".
+// Yousaf Yousafzai — derived from his Software Engineer CV.
 // Edit this file to retune what the agent looks for; everything downstream
 // reads from here.
 
 export const profile = {
-  name: 'Yousaf Khan',
+  name: 'Yousaf Yousafzai',
   email: 'yousaf973bh@gmail.com',
   phone: '+973-39260916',
   linkedin: 'https://linkedin.com/in/yousafkhan973/',
@@ -137,8 +137,8 @@ export const profile = {
   // field, because a screening filter rejects on it and you never hear why.
   application: {
     firstName: 'Yousaf',
-    lastName: 'Khan',
-    fullName: 'Yousaf Khan',
+    lastName: 'Yousafzai',
+    fullName: 'Yousaf Yousafzai',
     email: 'yousaf973bh@gmail.com',
     phone: '+973 39260916',
     linkedin: 'https://linkedin.com/in/yousafkhan973/',

@@ -46,7 +46,7 @@ async function main() {
   const live = process.argv.includes('--send');
   const env = await readEnv();
 
-  const cvPath = env.CV_PATH || path.join(ROOT, 'resume', 'Yousaf Khan - Software Engineer.pdf');
+  const cvPath = env.CV_PATH || path.join(ROOT, 'resume', 'remote', 'Yousaf Yousafzai - Software Engineer.pdf');
   if (!existsSync(cvPath)) throw new Error(`CV not found at ${cvPath}. Set CV_PATH in .env.`);
 
   const state = await readJson('jobs.json', { picks: [], queue: [] });
